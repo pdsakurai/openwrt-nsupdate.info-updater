@@ -104,7 +104,7 @@ get_my_ip_address() {
 }
 
 process() {
-    local ip_version=$( printf "${1:?Missing: IP version}" | awk '{print tolower($0)}' ) 
+    local ip_version="${1:?Missing: IP version}"
 
     local my_ip_address=$( get_my_ip_address "$ip_version" )
     if [[ "$ip_version" == "ipv4" ]] && is_under_CGN "$my_ip_address"; then
