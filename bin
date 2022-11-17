@@ -42,12 +42,16 @@ function is_update_needed() {
         && printf "a" \
         || printf "aaaa" )"
 
-    if [ $( nslookup -type=$dns_record_type $HOST_NAME | grep -c "$my_ip_address" ) -ge 1 ]; then
-        log_info "$ip_version address of $HOST_NAME is still $my_ipaddress."
-        return 1
-    fi
+    local _is_update_needed=0 retry_left=3
+    while [ $retry_left -gt 0 ] && [ $_is_update_needed -ne 1 ]; do
+        [ $( nslookup -type=$dns_record_type $HOST_NAME | grep -c "$my_ip_address" ) -ge 1 ] && _is_update_needed=1
+        retry_left=$(( retry_left - 1 ))
+        sleep 1s
+    done
 
-    return 0
+
+    [ $_is_update_needed -ne 1 ] && log_info "$ip_version address of $HOST_NAME is still $my_ipaddress."
+    return $_is_update_needed
 }
 
 function delete_hostname() {
@@ -127,7 +131,7 @@ fi
 
 while true; do
     process "IPv4"
-    process "IPv6"
+    #process "IPv6"
 
     log_info "Next update will be done after 1 day."
     sleep 86400
