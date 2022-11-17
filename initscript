@@ -5,11 +5,11 @@ USE_PROCD=1
 START=99
 
 start_service() {
-	procd_open_instance
-	procd_set_param command /bin/sh "/usr/bin/nsupdate.info-updater"
+    procd_open_instance
+    procd_set_param command /bin/sh "/usr/bin/nsupdate.info-updater"
     procd_set_param env HOST_NAME=
     procd_set_param env SECRET_KEY=
-	procd_close_instance
+    procd_close_instance
 }
 
 service_triggers() {
