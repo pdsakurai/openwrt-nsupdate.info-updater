@@ -49,8 +49,7 @@ function is_update_needed() {
         sleep 1s
     done
 
-
-    [ $_is_update_needed -ne 1 ] && log_info "$ip_version address of $HOST_NAME is still $my_ipaddress."
+    [ $_is_update_needed -eq 1 ] && log_info "$ip_version address of $HOST_NAME is still $my_ip_address."
     return $_is_update_needed
 }
 
