@@ -1,8 +1,5 @@
 #!/bin/sh
 
-readonly HOST_NAME="${1:?Missing: Hostname}"
-readonly SECRET_KEY="${2:?Missing: Secret key}"
-
 function log_info() {
     local level="${1:-info}"
     local tag="nsupdate.info-updater[$$]"
@@ -114,6 +111,11 @@ function process() {
         update_hostname "$ip_version" "$my_ip_address"
     fi
 }
+
+if [ -z "$HOST_NAME" ] || [ -z "$SECRET_KEY" ]; then
+    log_error "Environment variables--HOST_NAME and SECRET_KET--must be defined."
+    exit 1
+fi
 
 while true; do
     process "IPv4"
