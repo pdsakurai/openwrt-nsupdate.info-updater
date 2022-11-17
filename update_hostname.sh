@@ -51,11 +51,10 @@ delete_hostname() {
     case "$result" in
         $result_successful)
             log_info "$ip_version address deleted for $HOST_NAME."
-            ;;
+            return 0
         *)
             log_error "Failed to delete $ip_version address for $HOST_NAME. Error: $result"
-            exit 1
-            ;;
+            return 1
     esac
 }
 
