@@ -33,16 +33,10 @@ is_under_CGN() {
 }
 
 is_update_needed() {
-    local ip_version="${1:?Missing: IP version}"
-    local my_ip_address="${2:?Missing: IP address}"
+    local my_ip_address="${1:?Missing: Current public IP address}"
 
-    local ip_address_delimiter=$( [ "$ip_version" == "ipv4" ] \
-        && printf "\." \
-        || printf ":" )
-    local hostname_ip_address=$( nslookup $HOST_NAME | grep "Address" | grep -v "#" | cut -d ' ' -f 2 | grep "$ip_address_delimiter" )
-
-    if [[ "$my_ip_address" == "$hostname_ip_address" ]]; then
-        log_info "$HOST_NAME is already updated with the same $ip_version address: $my_ip_address."
+    if [ $( nslookup $HOST_NAME | grep -c "$my_ip_address" ) -ge 1 ]; then
+        log_info "$HOST_NAME is already updated with the same address: $my_ip_address."
         return 1
     fi
 
@@ -117,7 +111,7 @@ process() {
         my_ip_address=""
     fi
 
-    if is_update_needed "$ip_version" "$my_ip_address"; then
+    if is_update_needed "$my_ip_address"; then
         update_hostname "$ip_version" "$my_ip_address"
     fi
 }
