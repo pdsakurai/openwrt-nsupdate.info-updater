@@ -115,7 +115,12 @@ function process() {
     fi
 }
 
-process "IPv4"
-process "IPv6"
+while true; do
+    process "IPv4"
+    process "IPv6"
+
+    log_info "Next update will be done after 1 day."
+    sleep 86400
+done
 
 exit 0
