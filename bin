@@ -54,9 +54,11 @@ function delete_hostname() {
         $result_successful)
             log_info "$ip_version address deleted for $HOST_NAME."
             return 0
+            ;;
         *)
             log_error "Failed to delete $ip_version address for $HOST_NAME. Error: $result"
             return 1
+            ;;
     esac
 }
 
@@ -77,6 +79,7 @@ function change_hostname() {
         *)
             log_error "Failed to update $HOST_NAME with $ip_version address. Error: $result"
             return 1
+            ;;
     esac
 
     return 0
