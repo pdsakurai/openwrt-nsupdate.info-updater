@@ -106,7 +106,7 @@ process() {
     local ip_version="${1:?Missing: IP version}"
 
     local my_ip_address=$( get_my_ip_address "$ip_version" )
-    if [ "$ip_version" == "IPv4" ] && is_under_CGN "$my_ip_address"; then
+    if [ "$ip_version" == "IPv4" ] && [ -n "$my_ip_address" ] && is_under_CGN "$my_ip_address"; then
         my_ip_address=""
     fi
 
