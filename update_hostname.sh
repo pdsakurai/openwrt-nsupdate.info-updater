@@ -4,11 +4,18 @@
 readonly HOST_NAME="${1:?Missing: Hostname}"
 readonly SECRET_KEY="${2:?Missing: Secret key}"
 
-#Don't edit anything below this line
-log() {
-    local tag="update_hostname.sh[$$]"
-    echo "$tag: ${@:?Cannot do empty logging}"
-    logger -t "$tag" "$@"
+function log_info() {
+    local level="${1:-info}"
+    local tag="nsupdate.info-updater[$$]"
+    logger -t "$tag" -pdaemon.$level "$@"
+}
+
+function log_warning() {
+    log_info "warning"
+}
+
+function log_error() {
+    log_info "err"
 }
 
 is_under_CGN() {
@@ -22,7 +29,7 @@ is_under_CGN() {
         return 1
     fi
 
-    log "IPv4 network is under CGN."
+    log_warning "IPv4 network is under CGN."
     return 0
 }
 
@@ -36,7 +43,7 @@ is_update_needed() {
     local hostname_ip_address=$( nslookup $HOST_NAME | grep "Address" | grep -v "#" | cut -d ' ' -f 2 | grep "$ip_address_delimiter" )
 
     if [[ "$my_ip_address" == "$hostname_ip_address" ]]; then
-        log "$HOST_NAME is already updated with the same $ip_version address: $my_ip_address."
+        log_info "$HOST_NAME is already updated with the same $ip_version address: $my_ip_address."
         return 1
     fi
 
@@ -50,10 +57,10 @@ delete_hostname() {
     local result_successful="deleted *"
     case "$result" in
         $result_successful)
-            log "$ip_version address deleted for $HOST_NAME."
+            log_info "$ip_version address deleted for $HOST_NAME."
             ;;
         *)
-            log "Failed to delete $ip_version address for $HOST_NAME. Error: $result"
+            log_error "Failed to delete $ip_version address for $HOST_NAME. Error: $result"
             exit 1
             ;;
     esac
@@ -75,13 +82,13 @@ change_hostname() {
     local result_successful_unchanged="nochg"
     case $( get_result_code "$result" ) in
         $result_successful_changed)
-            log "$HOST_NAME has been updated successfully with $ip_version address: $updated_ip_address"
+            log_info "$HOST_NAME has been updated successfully with $ip_version address: $updated_ip_address"
             ;;
         $result_successful_unchanged)
-            log "$HOST_NAME still has the same $ip_version address: $updated_ip_address."
+            log_info "$HOST_NAME still has the same $ip_version address: $updated_ip_address."
             ;;
         *)
-            log "Failed to update $HOST_NAME with $ip_version address. Error: $result"
+            log_error "Failed to update $HOST_NAME with $ip_version address. Error: $result"
             exit 1
             ;;
     esac
