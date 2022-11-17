@@ -84,11 +84,13 @@ update_hostname() {
     local ip_version="${1:?Missing: IP version}"
     local my_ip_address="$2"
 
-    if [[ -z "$my_ip_address" ]]; then
+    if [ -z "$my_ip_address" ]; then
         delete_hostname "$1"
     else
         change_hostname "$1"
     fi
+
+    return $?
 }
 
 get_my_ip_address() {
