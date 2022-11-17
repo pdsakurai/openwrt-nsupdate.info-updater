@@ -17,7 +17,7 @@ function log_error() {
     log_info "err"
 }
 
-is_under_CGN() {
+function is_under_CGN() {
     local my_ip_address="${1:?Missing:IP address}"
 
     local result=$( traceroute "$my_ip_address" -n --max-hops=3 | tail -1 )
@@ -32,7 +32,7 @@ is_under_CGN() {
     return 0
 }
 
-is_update_needed() {
+function is_update_needed() {
     local ip_version="${1:?Missing: IP version}"
     local my_ip_address="${2:-NXDOMAIN}"
 
@@ -48,7 +48,7 @@ is_update_needed() {
     return 0
 }
 
-delete_hostname() {
+function delete_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
     local result="$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/delete" )"
@@ -63,7 +63,7 @@ delete_hostname() {
     esac
 }
 
-change_hostname() {
+function change_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
     local result=$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
@@ -85,7 +85,7 @@ change_hostname() {
     return 0
 }
 
-update_hostname() {
+function update_hostname() {
     local ip_version="${1:?Missing: IP version}"
     local my_ip_address="$2"
 
@@ -98,11 +98,11 @@ update_hostname() {
     return $?
 }
 
-get_my_ip_address() {
+function get_my_ip_address() {
     uclient-fetch -qO- "https://${1:?Missing: IP version}.nsupdate.info/myip" 2> /dev/null
 }
 
-process() {
+function process() {
     local ip_version="${1:?Missing: IP version}"
 
     local my_ip_address=$( get_my_ip_address "$ip_version" )
