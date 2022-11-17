@@ -121,7 +121,7 @@ function process() {
 }
 
 if [ -z "$HOST_NAME" ] || [ -z "$SECRET_KEY" ]; then
-    log_error "Environment variables--HOST_NAME and SECRET_KET--must be defined."
+    log_error "Environment variables--HOST_NAME and SECRET_KEY--must be defined."
     exit 1
 fi
 
