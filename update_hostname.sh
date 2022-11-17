@@ -36,7 +36,7 @@ is_update_needed() {
     local ip_version="${1:?Missing: IP version}"
     local my_ip_address="$2"
 
-    local ip_address_delimiter=$( [[ "${ip_version,,}" == "ipv4" ]] \
+    local ip_address_delimiter=$( [[ "$ip_version" == "ipv4" ]] \
         && echo "\." \
         || echo ":" )
     local hostname_ip_address=$( nslookup $HOST_NAME | grep "Address" | grep -v "#" | cut -d ' ' -f 2 | grep "$ip_address_delimiter" )
@@ -52,7 +52,7 @@ is_update_needed() {
 delete_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
-    local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@${ip_version,,}.nsupdate.info/nic/delete" )
+    local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/delete" )
     local result_successful="deleted *"
     case "$result" in
         $result_successful)
@@ -75,7 +75,7 @@ change_hostname() {
         echo $1 | cut -d ' ' -f 2
     }
 
-    local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@${ip_version,,}.nsupdate.info/nic/update" )
+    local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
     local updated_ip_address=$( get_result_ip_address "$result" )
     local result_successful_changed="good"
     local result_successful_unchanged="nochg"
@@ -106,14 +106,14 @@ update_hostname() {
 
 get_my_ip_address() {
     local ip_version="${1:?Missing: IP version}"
-    curl -s https://${ip_version,,}.nsupdate.info/myip
+    curl -s https://$ip_version.nsupdate.info/myip
 }
 
 process() {
-    local ip_version="${1:?Missing: IP version}"
+    local ip_version=$( printf "${1:?Missing: IP version}" | awk '{print tolower($0)}' ) 
 
     local my_ip_address=$( get_my_ip_address "$ip_version" )
-    if [[ "${ip_version,,}" == "ipv4" ]] && is_under_CGN "$my_ip_address"; then
+    if [[ "$ip_version" == "ipv4" ]] && is_under_CGN "$my_ip_address"; then
         my_ip_address=""
     fi
 
