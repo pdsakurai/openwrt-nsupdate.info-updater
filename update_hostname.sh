@@ -94,7 +94,7 @@ update_hostname() {
 }
 
 get_my_ip_address() {
-    uclient-fetch -qO- "https://${1:?Missing: IP version}.nsupdate.info/myip"
+    uclient-fetch -qO- "https://${1:?Missing: IP version}.nsupdate.info/myip" 2> /dev/null
 }
 
 process() {
