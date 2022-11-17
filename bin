@@ -1,17 +1,22 @@
 #!/bin/sh
 
-function log_info() {
-    local level="${1:-info}"
+function log() {
+    local level="${1:?Missing: Log level}"
+    shift
     local tag="nsupdate.info-updater[$$]"
     logger -t "$tag" -pdaemon.$level "$@"
 }
 
+function log_info() {
+    log "info" $@
+}
+
 function log_warning() {
-    log_info "warning"
+    log "warning" $@
 }
 
 function log_error() {
-    log_info "err"
+    log "err" $@
 }
 
 function is_under_CGN() {
