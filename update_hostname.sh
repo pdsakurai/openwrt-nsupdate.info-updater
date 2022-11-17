@@ -20,11 +20,11 @@ function log_error() {
 is_under_CGN() {
     local my_ip_address="${1:?Missing:IP address}"
 
-    local result=$( traceroute "$my_ip_address" -n --max-hops=3 | tail -1 | xargs )
-    local hops=$( echo $result | cut -d ' ' -f 1 )
-    local ip_address=$( echo $result | cut -d ' ' -f 2 )
+    local result=$( traceroute "$my_ip_address" -n --max-hops=3 | tail -1 )
+    local hops=$( echo ${result## } | cut -d ' ' -f 1 )
+    local ip_address=$( echo ${result## } | cut -d ' ' -f 2 )
 
-    if [[ "$hops" == "1" && "$my_ip_address" == "$ip_address" ]]; then
+    if [ "$hops" == "1" ] && [ "$my_ip_address" == "$ip_address" ]; then
         return 1
     fi
 
