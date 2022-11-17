@@ -21,8 +21,8 @@ is_under_CGN() {
     local my_ip_address="${1:?Missing:IP address}"
 
     local result=$( traceroute "$my_ip_address" -n --max-hops=3 | tail -1 )
-    local hops=$( echo ${result## } | cut -d ' ' -f 1 )
-    local ip_address=$( echo ${result## } | cut -d ' ' -f 2 )
+    local hops=$( printf "${result## }" | cut -d ' ' -f 1 )
+    local ip_address=$( printf "${result## }" | cut -d ' ' -f 2 )
 
     if [ "$hops" == "1" ] && [ "$my_ip_address" == "$ip_address" ]; then
         return 1
@@ -34,11 +34,11 @@ is_under_CGN() {
 
 is_update_needed() {
     local ip_version="${1:?Missing: IP version}"
-    local my_ip_address="$2"
+    local my_ip_address="${2:?Missing: IP address}"
 
-    local ip_address_delimiter=$( [[ "$ip_version" == "ipv4" ]] \
-        && echo "\." \
-        || echo ":" )
+    local ip_address_delimiter=$( [ "$ip_version" == "ipv4" ] \
+        && printf "\." \
+        || printf ":" )
     local hostname_ip_address=$( nslookup $HOST_NAME | grep "Address" | grep -v "#" | cut -d ' ' -f 2 | grep "$ip_address_delimiter" )
 
     if [[ "$my_ip_address" == "$hostname_ip_address" ]]; then
@@ -69,10 +69,10 @@ change_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
     get_result_code() {
-        echo $1 | cut -d ' ' -f 1
+        printf "$1" | cut -d ' ' -f 1
     }
     get_result_ip_address() {
-        echo $1 | cut -d ' ' -f 2
+        printf "$1" | cut -d ' ' -f 2
     }
 
     local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
