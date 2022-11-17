@@ -46,7 +46,7 @@ is_update_needed() {
 delete_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
-    local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/delete" )
+    local result="$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/delete" )"
     local result_successful="deleted *"
     case "$result" in
         $result_successful)
@@ -69,7 +69,7 @@ change_hostname() {
         printf "$1" | cut -d ' ' -f 2
     }
 
-    local result=$( curl -s "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
+    local result=$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
     local updated_ip_address=$( get_result_ip_address "$result" )
     local result_successful_changed="good"
     local result_successful_unchanged="nochg"
@@ -100,7 +100,7 @@ update_hostname() {
 
 get_my_ip_address() {
     local ip_version="${1:?Missing: IP version}"
-    curl -s https://$ip_version.nsupdate.info/myip
+    uclient-fetch -qO- "https://$ip_version.nsupdate.info/myip"
 }
 
 process() {
