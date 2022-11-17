@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-#Configuration
 readonly HOST_NAME="${1:?Missing: Hostname}"
 readonly SECRET_KEY="${2:?Missing: Secret key}"
 
