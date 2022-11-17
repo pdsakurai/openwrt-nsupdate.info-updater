@@ -13,7 +13,7 @@ start_service() {
 }
 
 service_triggers() {
-    procd_add_reload_interface_trigger wan
-    procd_add_reload_interface_trigger wan6
-    procd_add_reload_interface_trigger br-lan
+    for interface in wan wan6 lan; do
+        procd_add_interface_trigger "interface.up" $interface /etc/init.d/$NAME restart
+    done
 }
