@@ -134,7 +134,7 @@ while true; do
     #process "IPv6"
 
     log_info "Next update will be done after 1 day."
-    sleep 86400
+    sleep 1d
 done
 
 exit 0
