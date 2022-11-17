@@ -61,29 +61,23 @@ delete_hostname() {
 change_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
-    get_result_code() {
-        printf "$1" | cut -d ' ' -f 1
-    }
-    get_result_ip_address() {
-        printf "$1" | cut -d ' ' -f 2
-    }
-
     local result=$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
-    local updated_ip_address=$( get_result_ip_address "$result" )
+    local updated_ip_address=$( printf "$result" | cut -d ' ' -f 2 )
     local result_successful_changed="good"
     local result_successful_unchanged="nochg"
-    case $( get_result_code "$result" ) in
+    case $( printf "$result" | cut -d ' ' -f 1 ) in
         $result_successful_changed)
             log_info "$HOST_NAME has been updated successfully with $ip_version address: $updated_ip_address"
             ;;
         $result_successful_unchanged)
-            log_info "$HOST_NAME still has the same $ip_version address: $updated_ip_address."
+            log_warning "$HOST_NAME still has the same $ip_version address: $updated_ip_address."
             ;;
         *)
             log_error "Failed to update $HOST_NAME with $ip_version address. Error: $result"
-            exit 1
-            ;;
+            return 1
     esac
+
+    return 0
 }
 
 update_hostname() {
