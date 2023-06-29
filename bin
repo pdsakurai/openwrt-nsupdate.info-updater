@@ -1,9 +1,10 @@
+#Destination file: /usr/bin/update_ddns
 #!/bin/sh
 
 function log() {
     local level="${1:?Missing: Log level}"
     shift
-    local tag="nsupdate.info-updater[$$]"
+    local tag="update_ddns[$$]"
     logger -t "$tag" -pdaemon.$level "$@"
 }
 
@@ -133,8 +134,6 @@ while true; do
     process "IPv4"
     process "IPv6"
 
-    log_info "Next update will be done after 1 day."
-    sleep 1d
+    log_info "Next update will be done after 5 minutes."
+    sleep 5m
 done
-
-exit 0

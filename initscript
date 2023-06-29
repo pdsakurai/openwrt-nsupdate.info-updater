@@ -1,8 +1,9 @@
+#Destination file: /etc/init.d/update_ddns
 #!/bin/sh /etc/rc.common
 
-NAME="nsupdate.info-updater"
-USE_PROCD=1
-START=99
+readonly NAME="update_ddns"
+readonly USE_PROCD=1
+readonly START=99
 
 start_service() {
     procd_open_instance
