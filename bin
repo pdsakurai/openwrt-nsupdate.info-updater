@@ -1,6 +1,8 @@
 #Destination file: /usr/bin/update_ddns
 #!/bin/sh
 
+readonly cmd_resolve="wget -qO-"
+
 function log() {
     local level="${1:?Missing: Log level}"
     shift
@@ -58,7 +60,7 @@ function is_update_needed() {
 function delete_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
-    local result="$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/delete" )"
+    local result="$( $cmd_resolve "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/delete" )"
     local result_successful="deleted *"
     case "$result" in
         $result_successful)
@@ -75,7 +77,7 @@ function delete_hostname() {
 function change_hostname() {
     local ip_version="${1:?Missing: IP version}"
 
-    local result=$( uclient-fetch -qO- "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
+    local result=$( $cmd_resolve "https://$HOST_NAME:$SECRET_KEY@$ip_version.nsupdate.info/nic/update" )
     local updated_ip_address=$( printf "$result" | cut -d ' ' -f 2 )
     local result_successful_changed="good"
     local result_successful_unchanged="nochg"
@@ -109,7 +111,7 @@ function update_hostname() {
 }
 
 function get_my_ip_address() {
-    uclient-fetch -qO- "https://${1:?Missing: IP version}.nsupdate.info/myip" 2> /dev/null
+    $cmd_resolve "https://${1:?Missing: IP version}.nsupdate.info/myip" 2> /dev/null
 }
 
 function process() {
