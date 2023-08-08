@@ -141,7 +141,7 @@ function process() {
 
 function is_it_working() {
     local ip_version="${1:?Missing: IP version}"
-    ping -${ip_version#ipv} -c1 -q -w10 google.com &> /dev/null
+    ping -${ip_version#IPv} -c1 -q -w10 google.com &> /dev/null
 }
 
 if [ -z "$HOST_NAME" ] || [ -z "$SECRET_KEY" ]; then
