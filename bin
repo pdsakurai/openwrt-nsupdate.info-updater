@@ -145,8 +145,10 @@ if [ -z "$HOST_NAME" ] || [ -z "$SECRET_KEY" ]; then
 fi
 
 while true; do
-    process "IPv4"
-    process "IPv6"
+    delay="5m"
 
-    sleep 5m
+    process "IPv4" || delay="1m"
+    process "IPv6" || delay="1m"
+
+    sleep $delay
 done
