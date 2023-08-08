@@ -139,6 +139,11 @@ function process() {
     fi
 }
 
+function is_it_working() {
+    local ip_version="${1:?Missing: IP version}"
+    ping -${ip_version#ipv} -c1 -q -w10 google.com &> /dev/null
+}
+
 if [ -z "$HOST_NAME" ] || [ -z "$SECRET_KEY" ]; then
     log_error "Environment variables--HOST_NAME and SECRET_KEY--must be defined."
     exit 1
@@ -147,8 +152,12 @@ fi
 while true; do
     delay="5m"
 
-    process "IPv4" || delay="1m"
-    process "IPv6" || delay="1m"
+    for ip_version in IPv4 IPv6; do
+        is_it_working "$ip_version" && { 
+            process "$ip_version"
+            || delay="1m"
+        }
+    done
 
     sleep $delay
 done
