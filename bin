@@ -110,7 +110,16 @@ function update_hostname() {
 }
 
 function get_my_ip_address() {
-    $cmd_resolve "https://${1:?Missing: IP version}.nsupdate.info/myip" 2> /dev/null
+    local my_ip_address="" retry_left=3
+    while [ $retry_left -gt 0 ] && [ -z "$my_ip_address" ]; do
+        my_ip_address="$( $cmd_resolve "https://my${1:?Missing: IP version}.addr.tools/" 2> /dev/null )"
+        [ -z "$my_ip_address" ] && {
+            sleep 1s
+            retry_left=$(( retry_left - 1 ))
+        }
+    done
+
+    echo $my_ip_address
 }
 
 function process() {
