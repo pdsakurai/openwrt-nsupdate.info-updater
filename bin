@@ -152,10 +152,10 @@ fi
 while true; do
     delay="5m"
 
-    for ip_version in IPv4 IPv6; do
-        is_it_working "$ip_version" && { 
-            process "$ip_version"
-            || delay="1m"
+    for item in IPv4 IPv6; do
+        is_it_working "$item" && { 
+            process "$item" \
+                || delay="1m"
         }
     done
 
