@@ -45,27 +45,23 @@ function is_update_needed() {
         && printf "a" \
         || printf "aaaa" )"
 
-    local _is_update_needed=0 retry_left=3
-    while [ $retry_left -gt 0 ] && [ $_is_update_needed -ne 1 ]; do
-        [ $( nslookup -type=$dns_record_type $HOST_NAME | grep -c "$my_ip_address" ) -ge 1 ] \
-            && _is_update_needed=1 \
-            || sleep 1s
-        retry_left=$(( retry_left - 1 ))
-    done
-
-    retry_left=3
-    local ip_addresses=
+    local retry_left=3 ip_addresses= _is_update_needed=0
     while [ $retry_left -gt 0 ] && [ -z "$ip_addresses" ]; do
         ip_addresses=$( nslookup -type=$dns_record_type $HOST_NAME | grep "answer:" -A 30 | grep "Address:" | cut -d' ' -f2 )
         retry_left=$(( retry_left - 1 ))
+        sleep 1s
     done
 
-    local ip_address=
-    for ip_address in $ip_addresses; do
-        [ $( ip address | grep -c "$ip_address" ) -ge 1 ] \
-            && _is_update_needed=1 \
-            && break
-    done
+    if [ $( echo $ip_addresses | grep -c "$my_ip_address" ) -ge 1 ]; then
+        _is_update_needed=1
+    else
+        local ip_address=
+        for ip_address in $ip_addresses; do
+            [ $( ip address | grep -c "$ip_address" ) -ge 1 ] \
+                && _is_update_needed=1 \
+                && break
+        done
+    fi
 
     return $_is_update_needed
 }
