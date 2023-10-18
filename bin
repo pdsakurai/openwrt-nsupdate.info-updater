@@ -53,8 +53,14 @@ function is_update_needed() {
         retry_left=$(( retry_left - 1 ))
     done
 
+    retry_left=3
+    local ip_addresses=
+    while [ $retry_left -gt 0 ] && [ -z "$ip_addresses" ]; do
+        ip_addresses=$( nslookup -type=$dns_record_type $HOST_NAME | grep "answer:" -A 30 | grep "Address:" | cut -d' ' -f2 )
+        retry_left=$(( retry_left - 1 ))
+    done
+
     local ip_address=
-    local ip_addresses=$( nslookup -type=$dns_record_type $HOST_NAME | grep "answer:" -A 30 | grep "Address:" | cut -d' ' -f2 )
     for ip_address in $ip_addresses; do
         [ $( ip address | grep -c "$ip_address" ) -ge 1 ] \
             && _is_update_needed=0 \
