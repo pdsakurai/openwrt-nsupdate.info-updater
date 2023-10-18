@@ -63,7 +63,7 @@ function is_update_needed() {
     local ip_address=
     for ip_address in $ip_addresses; do
         [ $( ip address | grep -c "$ip_address" ) -ge 1 ] \
-            && _is_update_needed=0 \
+            && _is_update_needed=1 \
             && break
     done
 
