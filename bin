@@ -57,7 +57,7 @@ function is_update_needed() {
     else
         local ip_address=
         for ip_address in $ip_addresses; do
-            [ $( ip address | grep -c "$ip_address" ) -ge 1 ] \
+            [ $( ip address | grep -v " deprecated" | grep -c "$ip_address" ) -ge 1 ] \
                 && _is_update_needed=1 \
                 && break
         done
