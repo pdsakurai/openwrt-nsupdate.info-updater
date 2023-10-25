@@ -151,7 +151,10 @@ function process() {
 
 function is_it_working() {
     local ip_version="${1:?Missing: IP version}"
-    ping -${ip_version#IPv} -c1 -q -w10 google.com &> /dev/null
+    [ "$ip_version" == "IPv4" ] \
+        && local peer="9.9.9.9" \
+        || local peer="2620:fe::fe"
+    ping -${ip_version#IPv} -c1 -q -w10 $peer &> /dev/null
 }
 
 if [ -z "$HOST_NAME" ] || [ -z "$SECRET_KEY" ]; then
